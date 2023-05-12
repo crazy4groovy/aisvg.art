@@ -4,7 +4,7 @@
   import { onDestroy, onMount } from "svelte";
   import { fade } from "svelte/transition";
 
-  import intersection, { type Onload } from "./onloadIntersectionObserver";
+  import intersection, { type Onload } from "../lib/onloadIntersectionObserver";
 
   export let onload: Onload;
 

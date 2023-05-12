@@ -1,5 +1,5 @@
 import { writable, get } from "svelte/store";
-import { loadOriginalList, loadSvg4CroppedList } from "../lib/loader";
+import { loadOriginalList, loadSvg4CroppedList } from "../lib/loaders";
 
 // dates: string[]
 // images: object[]
@@ -45,21 +45,37 @@ export const paginate = async () => {
           src: arr[0],
           id: arr[1],
           meta: arr[4],
-          searchTokens: (arr[4] as any).textPrompt.join(" ").toLowerCase().replace(/[;:,]/g, ' ').split(" ").filter(t => t.length > 2)
+          searchTokens: makeSearchTokens((arr[4] as any).textPrompt),
         } as Img)
     )
     .filter((origImg) => svgIds.includes(origImg.id));
-  console.log(origImgs[0])
   const origIds = origImgs.map((obj) => obj.id);
 
   svg4Imgs = svg4Imgs.filter((svgImg) => origIds.includes(svgImg.id));
   svgIds = svg4Imgs.map((obj) => obj.id);
 
-  x.svg4CroppedImgs = [...x.svg4CroppedImgs, ...svg4Imgs];
+  const set = new Set();
+  x.svg4CroppedImgs = [...x.svg4CroppedImgs, ...svg4Imgs].filter((img) => {
+    if (set.has(img.id)) {
+      return false;
+    }
+    set.add(img.id);
+    return true;
+  });
   x.originalCroppedImgs = [...x.originalCroppedImgs, ...origImgs];
   x.pages = [date, ...x.pages];
 
   store.set(x);
 
+  // recurse call if any images were found
   if (svgIds.length) return paginate();
 };
+
+function makeSearchTokens(textPrompt: string[]) {
+  return textPrompt
+    .join(" ")
+    .toLowerCase()
+    .replace(/[;:,]/g, " ")
+    .split(" ")
+    .filter((t) => t.length > 2);
+}

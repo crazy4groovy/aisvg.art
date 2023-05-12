@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { type Onload } from "./onloadIntersectionObserver";
+  import { type Onload } from "../lib/onloadIntersectionObserver";
   import Lazy from "./Lazy.svelte";
+
   export let src = "";
   export let alt = "";
   export let isTop = false;

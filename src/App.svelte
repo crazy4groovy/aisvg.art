@@ -1,13 +1,14 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import fzy from "fuzzysearch";
   import midjourneyLogo from "./assets/Midjourney.svg";
   import svgLogo from "./assets/SVG.svg";
 
   import { store as imgStore, paginate, type Img } from "./stores/images";
   import { store as searchStore } from "./stores/searchText";
-  import ImgCard from "./lib/ImgCard.svelte";
-  import SearchInput from "./lib/SearchInput.svelte";
+  import ImgCard from "./components/ImgCard.svelte";
+  import SearchInput from "./components/SearchInput.svelte";
+
+  import { filterNeedleSearchTokens } from "./lib/filterNeedleSearchTokens";
 
   // let pages: string[];
   let svg4CroppedImgs: Img[];
@@ -38,7 +39,6 @@
     }, {});
 
     const needle = $searchStore.toLocaleLowerCase();
-    const filterImgs = filterNeedle(needle);
 
     if (needle.length <= 2) {
       displayedSvg4CroppedImgs = svg4CroppedImgs.slice(
@@ -47,18 +47,9 @@
       );
     } else {
       displayedSvg4CroppedImgs = svg4CroppedImgs
-        .filter(filterImgs)
+        .filter(filterNeedleSearchTokens(originalCroppedImgsById, needle))
         .slice(0, 50);
     }
-  }
-
-  function filterNeedle(
-    needle: string
-  ): (value: Img, index: number, array: Img[]) => unknown {
-    return (img): boolean =>
-      originalCroppedImgsById[img.id].searchTokens.some((token) =>
-        fzy(needle, token)
-      );
   }
 </script>
 
@@ -101,19 +92,22 @@
 
     <h1 id="search-start">SVGs:</h1>
 
-    <SearchInput placeholder="Prompt Search" />
+    <SearchInput placeholder="Prompt Search" debounceDelayMs={250} />
 
-    {#each displayedSvg4CroppedImgs as svg, i (svg)}
-      <h4>{svg.id}</h4>
-      <p class="prompt">
-        {originalCroppedImgsById[svg.id]?.meta.textPrompt ?? "no prompt found"}
-      </p>
-      <ImgCard src={svg.src} alt={svg.id} />
-      <ImgCard
-        src={originalCroppedImgsById[svg.id]?.src}
-        alt={originalCroppedImgsById[svg.id]?.id}
-        isTop={true}
-      />
+    {#each displayedSvg4CroppedImgs as svg, i (svg.id)}
+      <div>
+        <h4>{svg.id}</h4>
+        <p class="prompt">
+          {originalCroppedImgsById[svg.id]?.meta.textPrompt ??
+            "no prompt found"}
+        </p>
+        <ImgCard src={svg.src} alt={svg.id} />
+        <ImgCard
+          src={originalCroppedImgsById[svg.id]?.src}
+          alt={originalCroppedImgsById[svg.id]?.id}
+          isTop={true}
+        />
+      </div>
     {/each}
 
     <div class="pagination">
