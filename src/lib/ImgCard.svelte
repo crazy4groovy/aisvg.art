@@ -20,7 +20,7 @@
   img.isTop {
     cursor: pointer;
     display: inline-block;
-    transform: perspective(400px) translateX(calc(-1 * min(40vw, 350px) / 2)) rotateY(0);
+    transform: perspective(400px) translateX(calc(-1 * min(40vw, 400px) / 2)) rotateY(0);
     transition: .8s all ease-in-out;
   }
   img.isTop:hover, img.isTop:focus {

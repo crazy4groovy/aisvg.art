@@ -13,7 +13,7 @@ export async function loadSvg4CroppedList(
 ): Promise<Svg4Cropped[]> {
   const text = await fetch(
     `https://images.aisvg.art/midjourney-showcase/svg-4-cropped/__final-${date}.txt`
-  ).then((r) => r.text());
+  ).then((r) => r.text()).catch(() => '');
 
   const data = text
     .split("\r\n")
@@ -32,7 +32,7 @@ export async function loadSvg4CroppedList(
 export async function loadOriginalList(date: string): Promise<Array<string[]>> {
   const text = await fetch(
     `https://images.aisvg.art/midjourney-showcase/original/___jobs-${date}.yaml`
-  ).then((r) => r.text());
+  ).then((r) => r.text()).catch(() => '');
 
   const data = text
     .split("\n")

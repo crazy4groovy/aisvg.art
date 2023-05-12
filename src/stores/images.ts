@@ -8,6 +8,7 @@ export interface Img {
   src: string;
   id: string;
   meta?: any;
+  searchTokens?: string[];
 }
 
 export interface Store {
@@ -44,9 +45,11 @@ export const paginate = async () => {
           src: arr[0],
           id: arr[1],
           meta: arr[4],
+          searchTokens: (arr[4] as any).textPrompt.join(" ").toLowerCase().replace(/[;:,]/g, ' ').split(" ").filter(t => t.length > 2)
         } as Img)
     )
     .filter((origImg) => svgIds.includes(origImg.id));
+  console.log(origImgs[0])
   const origIds = origImgs.map((obj) => obj.id);
 
   svg4Imgs = svg4Imgs.filter((svgImg) => origIds.includes(svgImg.id));
@@ -57,4 +60,6 @@ export const paginate = async () => {
   x.pages = [date, ...x.pages];
 
   store.set(x);
+
+  if (svgIds.length) return paginate();
 };

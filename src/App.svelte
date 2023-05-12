@@ -1,23 +1,64 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+  import fzy from "fuzzysearch";
   import midjourneyLogo from "./assets/Midjourney.svg";
   import svgLogo from "./assets/SVG.svg";
 
-  import { store, paginate, type Img } from "./stores/images";
+  import { store as imgStore, paginate, type Img } from "./stores/images";
+  import { store as searchStore } from "./stores/searchText";
   import ImgCard from "./lib/ImgCard.svelte";
+  import SearchInput from "./lib/SearchInput.svelte";
 
-  let pages: string[];
+  // let pages: string[];
   let svg4CroppedImgs: Img[];
   let originalCroppedImgs: Img[];
   let originalCroppedImgsById: Record<string, Img>;
+  let displayedSvg4CroppedImgs: Img[];
+  let pageNumber: number = 0;
+
+  onMount(() => {
+    paginate();
+  });
+
+  function handleNextPage() {
+    pageNumber += 1;
+    document.querySelector("#search-start")?.scrollIntoView();
+  }
+
+  function handlePrevPage() {
+    pageNumber = Math.max(0, pageNumber - 1);
+    document.querySelector("#search-start")?.scrollIntoView();
+  }
 
   $: {
-    ({ pages, svg4CroppedImgs, originalCroppedImgs } = $store);
+    ({ svg4CroppedImgs, originalCroppedImgs } = $imgStore);
     originalCroppedImgsById = originalCroppedImgs.reduce((map, img) => {
       map[img.id] = img;
       return map;
     }, {});
-    console.log(originalCroppedImgsById);
-    if (!pages.length) paginate();
+
+    const needle = $searchStore.toLocaleLowerCase();
+    const filterImgs = filterNeedle(needle);
+
+    if (needle.length <= 2) {
+      displayedSvg4CroppedImgs = svg4CroppedImgs.slice(
+        pageNumber * 15,
+        pageNumber * 15 + 15
+      );
+    } else {
+      displayedSvg4CroppedImgs = svg4CroppedImgs
+        .filter(filterImgs)
+        .slice(0, 50);
+    }
+  }
+
+  function filterNeedle(
+    needle: string
+  ): (value: Img, index: number, array: Img[]) => unknown {
+    return (img): boolean =>
+      originalCroppedImgsById[img.id].searchTokens.some((token) =>
+        fzy(needle, token)
+      );
   }
 </script>
 
@@ -34,6 +75,7 @@
     </div>
 
     <h1>Celebrating AI SVG Art.</h1>
+
     <h2>
       All source images were gathered from the Midjourney publicly viewable and
       remixable <a href="https://midjourney.com/showcase/recent/">"showcase"</a>
@@ -52,28 +94,36 @@
 
     <h3>
       Original images had their backgrounds auto-cropped, then converted from a
-      raster image into paths i.e. SVG. Tap on the original image to reveal the
-      remixed SVG.
+      raster image into paths i.e. SVG.
     </h3>
 
-    <h1>SVGs:</h1>
+    <h3>Hover/tap on the original image to reveal the remixed SVG.</h3>
 
-    {#each svg4CroppedImgs as svg, i (svg)}
+    <h1 id="search-start">SVGs:</h1>
+
+    <SearchInput placeholder="Prompt Search" />
+
+    {#each displayedSvg4CroppedImgs as svg, i (svg)}
       <h4>{svg.id}</h4>
       <p class="prompt">
         {originalCroppedImgsById[svg.id]?.meta.textPrompt ?? "no prompt found"}
       </p>
-      <ImgCard
-        src={svg.src}
-        alt={svg.id}
-        onload={i + 1 === svg4CroppedImgs.length ? paginate : undefined}
-      />
+      <ImgCard src={svg.src} alt={svg.id} />
       <ImgCard
         src={originalCroppedImgsById[svg.id]?.src}
         alt={originalCroppedImgsById[svg.id]?.id}
         isTop={true}
       />
     {/each}
+
+    <div class="pagination">
+      {#if pageNumber > 0 && $searchStore.length < 3}
+        <button on:click={handlePrevPage} title="Prev Page">⏮</button>
+      {/if}
+      {#if $searchStore.length < 3}
+        <button on:click={handleNextPage} title="Next Page">⏭</button>
+      {/if}
+    </div>
   </div>
 </main>
 
@@ -114,5 +164,8 @@
     vertical-align: middle;
     transform: translateY(-50px);
     display: inline-block;
+  }
+  .pagination {
+    margin: 2rem;
   }
 </style>
