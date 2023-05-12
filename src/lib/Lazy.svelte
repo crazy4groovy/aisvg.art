@@ -4,7 +4,7 @@
   import { onDestroy, onMount } from "svelte";
   import { fade } from "svelte/transition";
 
-  import observer, { type Onload } from "./intersectionObserver";
+  import intersection, { type Onload } from "./onloadIntersectionObserver";
 
   export let onload: Onload;
 
@@ -17,17 +17,17 @@
   };
 
   onMount(() => {
-    observer.observe(root, onloadWrapper);
+    intersection.observe(root, onloadWrapper);
   });
 
   // onDestroy(() => {
-  //   observer.unobserve(root);
+  //   intersection.unobserve(root);
   // });
 </script>
 
 <span bind:this={root}>
   {#if loaded}
-    <span transition:fade>
+    <span transition:fade={{delay: 500, duration: 2000}}>
       <slot />
     </span>
   {/if}

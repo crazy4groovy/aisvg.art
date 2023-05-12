@@ -35,10 +35,8 @@
 
     <h1>Celebrating AI SVG Art.</h1>
     <h2>
-      All source images were gathered from the Midjourney publicly viewable
-      and remixable <a href="https://midjourney.com/showcase/recent/"
-        >"showcase"</a
-      >
+      All source images were gathered from the Midjourney publicly viewable and
+      remixable <a href="https://midjourney.com/showcase/recent/">"showcase"</a>
       space, and are remixed explicitly under the fair-use, non-commercial license
       clause
       <a href="https://docs.midjourney.com/docs/terms-of-service#your-rights"
@@ -53,8 +51,9 @@
     </h2>
 
     <h3>
-      Original images have had their backgrounds auto-cropped, and then
-      converted from a raster image into paths i.e. SVG.
+      Original images had their backgrounds auto-cropped, then converted from a
+      raster image into paths i.e. SVG. Tap on the original image to reveal the
+      remixed SVG.
     </h3>
 
     <h1>SVGs:</h1>
@@ -72,6 +71,7 @@
       <ImgCard
         src={originalCroppedImgsById[svg.id]?.src}
         alt={originalCroppedImgsById[svg.id]?.id}
+        isTop={true}
       />
     {/each}
   </div>
@@ -85,7 +85,7 @@
   h4 {
     color: #333;
     background-color: #eee;
-    border-radius: 1rem;
+    border-radius: 0.5rem;
   }
   .logo {
     height: 6em;
