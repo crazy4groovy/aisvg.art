@@ -1,16 +1,15 @@
 <script lang="ts">
   import { onMount } from "svelte";
+
   import midjourneyLogo from "./assets/Midjourney.svg";
   import svgLogo from "./assets/SVG.svg";
-
+  import { filterNeedleSearchTokens } from "./lib/filterNeedleSearchTokens";
   import { store as imgStore, paginate, type Img } from "./stores/images";
-  import { store as searchStore } from "./stores/searchText";
+  import { storeDebouncer as searchStoreDebouncer } from "./stores/searchText";
   import ImgCard from "./components/ImgCard.svelte";
   import SearchInput from "./components/SearchInput.svelte";
 
-  import { filterNeedleSearchTokens } from "./lib/filterNeedleSearchTokens";
-
-  // let pages: string[];
+  const searchStoreDebounced = searchStoreDebouncer(400);
   let svg4CroppedImgs: Img[];
   let originalCroppedImgs: Img[];
   let originalCroppedImgsById: Record<string, Img>;
@@ -38,7 +37,8 @@
       return map;
     }, {});
 
-    const needle = $searchStore.toLocaleLowerCase();
+    const needle = $searchStoreDebounced.toLocaleLowerCase();
+    console.log(needle);
 
     if (needle.length <= 2) {
       displayedSvg4CroppedImgs = svg4CroppedImgs.slice(
@@ -92,7 +92,7 @@
 
     <h1 id="search-start">SVGs:</h1>
 
-    <SearchInput placeholder="Prompt Search" debounceDelayMs={250} />
+    <SearchInput placeholder="Prompt Search" />
 
     {#each displayedSvg4CroppedImgs as svg, i (svg.id)}
       <div>
@@ -111,10 +111,10 @@
     {/each}
 
     <div class="pagination">
-      {#if pageNumber > 0 && $searchStore.length < 3}
+      {#if pageNumber > 0 && $searchStoreDebounced.length < 3}
         <button on:click={handlePrevPage} title="Prev Page">⏮</button>
       {/if}
-      {#if $searchStore.length < 3}
+      {#if $searchStoreDebounced.length < 3}
         <button on:click={handleNextPage} title="Next Page">⏭</button>
       {/if}
     </div>
