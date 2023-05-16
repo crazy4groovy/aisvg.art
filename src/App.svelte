@@ -8,6 +8,7 @@
   import { storeDebouncer as searchStoreDebouncer } from "./stores/searchText";
   import ImgCard from "./components/ImgCard.svelte";
   import SearchInput from "./components/SearchInput.svelte";
+  import Details from "./components/Details.svelte";
 
   const searchStoreDebounced = searchStoreDebouncer(400);
   let svg4CroppedImgs: Img[];
@@ -67,25 +68,31 @@
 
     <h1>Celebrating AI SVG Art.</h1>
 
-    <h2>
-      All source images were gathered from the Midjourney publicly viewable and
-      remixable <a href="https://midjourney.com/showcase/recent/">"showcase"</a>
-      space, and are remixed explicitly under the fair-use, non-commercial license
-      clause
-      <a href="https://docs.midjourney.com/docs/terms-of-service#your-rights"
-        >"Your Rights"</a
-      >.
-    </h2>
+    <Details title="Legal">
+      <h2>
+        All source images were gathered from the Midjourney publicly viewable
+        and remixable <a href="https://midjourney.com/showcase/recent/"
+          >"showcase"</a
+        >
+        space, and are remixed explicitly under the fair-use, non-commercial license
+        clause
+        <a href="https://docs.midjourney.com/docs/terms-of-service#your-rights"
+          >"Your Rights"</a
+        >.
+      </h2>
 
-    <h2>
-      No authorship or ownership of any artwork is claimed. Reasonable attempts
-      to provide original sources and credit have been made by this site. (More
-      detailed information is available upon serious request.)
-    </h2>
+      <h2>
+        No authorship or ownership of any artwork is claimed. Reasonable
+        attempts to provide original sources and credit have been made by this
+        site.
+      </h2>
+
+      <p>(More detailed information is available upon serious request.)</p>
+    </Details>
 
     <h3>
-      Original images had their backgrounds auto-cropped, then converted from a
-      raster image into paths i.e. SVG.
+      Original Midjourney images have had their backgrounds auto-cropped, then
+      converted from a raster image into paths i.e. SVG.
     </h3>
 
     <h3>Hover/tap on the original image to reveal the remixed SVG.</h3>
