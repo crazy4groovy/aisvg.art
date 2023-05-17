@@ -39,7 +39,7 @@
     }, {});
 
     const needle = $searchStoreDebounced.toLocaleLowerCase();
-    console.log(needle);
+    // console.log(needle);
 
     if (needle.length <= 2) {
       displayedSvg4CroppedImgs = svg4CroppedImgs.slice(
@@ -50,6 +50,7 @@
       displayedSvg4CroppedImgs = svg4CroppedImgs
         .filter(filterNeedleSearchTokens(originalCroppedImgsById, needle))
         .slice(0, 50);
+      console.log({displayedSvg4CroppedImgs})
     }
   }
 </script>

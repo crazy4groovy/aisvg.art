@@ -32,20 +32,24 @@ export const paginate = async () => {
   date.setDate(date.getDate() + 1);
   date = date.toJSON().split("T")[0];
 
-  let svg4Imgs = (await loadSvg4CroppedList(date)).map<Img>((img) => ({
-    src: img.src,
-    id: img.id,
-  }));
+  let svg4Imgs = (await loadSvg4CroppedList(date)).map<Img>(
+    (img) =>
+      ({
+        src: img.src,
+        id: img.id,
+      } as Img)
+  );
   let svgIds = svg4Imgs.map((obj) => obj.id);
 
   const origImgs = (await loadOriginalList(date))
-    .map(
+    .map<Img>(
       (arr) =>
         ({
           src: arr[0],
           id: arr[1],
           meta: arr[4],
           searchTokens: makeSearchTokens((arr[4] as any).textPrompt),
+          date,
         } as Img)
     )
     .filter((origImg) => svgIds.includes(origImg.id));
@@ -55,14 +59,14 @@ export const paginate = async () => {
   svgIds = svg4Imgs.map((obj) => obj.id);
 
   const set = new Set();
-  x.svg4CroppedImgs = [...x.svg4CroppedImgs, ...svg4Imgs].filter((img) => {
+  x.svg4CroppedImgs = [...svg4Imgs, ...x.svg4CroppedImgs].filter((img) => {
     if (set.has(img.id)) {
       return false;
     }
     set.add(img.id);
     return true;
   });
-  x.originalCroppedImgs = [...x.originalCroppedImgs, ...origImgs];
+  x.originalCroppedImgs = [...origImgs, ...x.originalCroppedImgs];
   x.pages = [date, ...x.pages];
 
   store.set(x);
@@ -75,7 +79,7 @@ function makeSearchTokens(textPrompt: string[]) {
   return textPrompt
     .join(" ")
     .toLowerCase()
-    .replace(/[;:,]/g, " ")
+    .replace(/[;:,.]/g, " ")
     .split(" ")
     .filter((t) => t.length > 2);
 }
