@@ -1,7 +1,5 @@
 <script lang="ts">
   export let title: string = "";
-
-  $: console.log({title})
 </script>
 
 <details class="legal">
