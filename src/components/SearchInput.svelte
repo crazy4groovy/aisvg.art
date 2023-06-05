@@ -4,14 +4,15 @@
 
   export let placeholder = "";
 
-  function handleInput(target) {
-    store.set(target.value);
+  function handleInput(target: any) {
+    store.set(target.value.replace(/[\W]+/g, ''));
   }
 </script>
 
 <input
   type="text"
   on:input={(e) => handleInput(e.target)}
+  value={$store}
   class:inactive={$store.length <= 2}
   {placeholder}
 />
