@@ -27,6 +27,9 @@ export const store = writable<Store>(defaultData);
 export const paginate = async () => {
   const x = get(store);
 
+  // end recurse if past today's date
+  if (new Date(x.pages[0]) > new Date()) return;
+
   const lastDate = x.pages[0] ?? "2023-04-23";
   let date: any = new Date(lastDate);
   date.setDate(date.getDate() + 1);
@@ -71,8 +74,8 @@ export const paginate = async () => {
 
   store.set(x);
 
-  // recurse call if any images were found
-  if (svgIds.length) return paginate();
+  // recurse/loop call
+  setTimeout(paginate, 1);
 };
 
 function makeSearchTokens(textPrompt: string[]) {
