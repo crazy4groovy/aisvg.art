@@ -4,7 +4,7 @@ export async function loadSvg6List(date: string) {}
 
 export async function loadSvg4List(date: string) {}
 
-interface Svg4Cropped {
+export interface Svg4Cropped {
   id: string;
   src: string;
 }

@@ -4,7 +4,7 @@
   import midjourneyLogo from "./assets/Midjourney.svg";
   import svgLogo from "./assets/SVG.svg";
   import { filterNeedleSearchTokens } from "./lib/filterNeedleSearchTokens";
-  import { store as imgStore, paginate, type Img } from "./stores/images";
+  import { store as imgStore, paginate, populate, type Img } from "./stores/images";
   import { storeDebouncer as searchStoreDebouncer } from "./stores/searchText";
   import ImgCard from "./components/ImgCard.svelte";
   import SearchInput from "./components/SearchInput.svelte";
@@ -18,7 +18,8 @@
   let pageNumber: number = 0;
 
   onMount(() => {
-    paginate();
+    // paginate();
+    populate();
   });
 
   function handleNextPage() {
@@ -43,14 +44,14 @@
 
     if (needle.length <= 2) {
       displayedSvg4CroppedImgs = svg4CroppedImgs.slice(
-        pageNumber * 15,
-        pageNumber * 15 + 15
+        pageNumber * 20,
+        pageNumber * 20 + 20
       );
     } else {
       displayedSvg4CroppedImgs = svg4CroppedImgs
         .filter(filterNeedleSearchTokens(originalCroppedImgsById, needle))
-        .slice(0, 50);
-      console.log({displayedSvg4CroppedImgs})
+        .slice(0, 100);
+      // console.log({displayedSvg4CroppedImgs})
     }
   }
 </script>
@@ -106,8 +107,12 @@
       <div>
         <h4>{svg.id}</h4>
         <p class="prompt">
-          {originalCroppedImgsById[svg.id]?.meta.textPrompt ??
-            "no prompt found"}
+          {
+            originalCroppedImgsById[svg.id]?.meta.textPrompt[0]
+            .replace(/,\s*/g, ', ')
+            .replace(/\s+/g, ' ')
+            ?? "(no prompt found)"
+          }
         </p>
         <ImgCard src={svg.src} alt={svg.id} />
         <ImgCard
