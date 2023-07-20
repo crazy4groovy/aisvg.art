@@ -39,20 +39,20 @@
       return map;
     }, {});
 
-    const needle = $searchStoreDebounced.toLocaleLowerCase();
-    // console.log(needle);
+    const needleSearch = $searchStoreDebounced.toLocaleLowerCase();
+    // console.log(needleSearch);
 
-    if (needle.length <= 2) {
+    if (needleSearch.length > 2) {
+      displayedSvg4CroppedImgs = svg4CroppedImgs
+        .filter(filterNeedleSearchTokens(originalCroppedImgsById, needleSearch))
+        .slice(0, 100);
+    } else {
       displayedSvg4CroppedImgs = svg4CroppedImgs.slice(
         pageNumber * 20,
         pageNumber * 20 + 20
       );
-    } else {
-      displayedSvg4CroppedImgs = svg4CroppedImgs
-        .filter(filterNeedleSearchTokens(originalCroppedImgsById, needle))
-        .slice(0, 100);
-      // console.log({displayedSvg4CroppedImgs})
     }
+    // console.log({displayedSvg4CroppedImgs})
   }
 </script>
 
@@ -101,7 +101,13 @@
 
     <h1 id="search-start">SVGs:</h1>
 
-    <SearchInput placeholder="Prompt Search" />
+    {#if displayedSvg4CroppedImgs.length > 0}
+      <SearchInput placeholder="Prompt Search" />
+    {:else}
+      <hr />
+      <div>Loading image data ... Please be patient</div>
+      <hr />
+    {/if}
 
     {#each displayedSvg4CroppedImgs as svg, i (svg.id)}
       <div>
@@ -123,14 +129,16 @@
       </div>
     {/each}
 
-    <div class="pagination">
-      {#if pageNumber > 0 && $searchStoreDebounced.length < 3}
-        <button on:click={handlePrevPage} title="Prev Page">⏮</button>
-      {/if}
-      {#if $searchStoreDebounced.length < 3}
-        <button on:click={handleNextPage} title="Next Page">⏭</button>
-      {/if}
-    </div>
+    {#if displayedSvg4CroppedImgs.length > 0}
+      <div class="pagination">
+        {#if pageNumber > 0 && $searchStoreDebounced.length < 3}
+          <button on:click={handlePrevPage} title="Prev Page">⏮</button>
+        {/if}
+        {#if $searchStoreDebounced.length < 3}
+          <button on:click={handleNextPage} title="Next Page">⏭</button>
+        {/if}
+      </div>
+    {/if}
   </div>
 </main>
 
