@@ -99,10 +99,12 @@
 
     <h3>Hover/tap on the original image to reveal the remixed SVG.</h3>
 
-    <h1 id="search-start">SVGs:</h1>
+    <h1 id="search-start">
+      Browse {svg4CroppedImgs.length && svg4CroppedImgs.length.toLocaleString() || '...'} SVGs:
+    </h1>
 
-    {#if displayedSvg4CroppedImgs.length > 0}
-      <SearchInput placeholder="Prompt Search" />
+    {#if svg4CroppedImgs.length > 0}
+      <SearchInput placeholder="Enter prompt keyword" />
     {:else}
       <hr />
       <div>Loading image data ... Please be patient</div>

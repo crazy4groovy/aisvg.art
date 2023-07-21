@@ -9,10 +9,12 @@
   }
 </script>
 
+<!-- svelte-ignore a11y-autofocus -->
 <input
   type="text"
   on:input={(e) => handleInput(e.target)}
   value={$store}
+  autofocus={true}
   class:inactive={$store.length <= 2}
   {placeholder}
 />
